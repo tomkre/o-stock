@@ -1,0 +1,28 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+         search-locations: classpath:/config
+        git:
+          uri: https://github.com/tomkre/smia-configserver.git
+          username: tomkre
+          password: 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
+          searchPaths: config
+        vault:
+          port: 8200
+          host: localhost
+          scheme: http
+          authentication: TOKEN
+          token: myroot
+          kv-version: 2
+server:
+  port: 8071
+encrypt:
+  key: IMSYMMETRIC

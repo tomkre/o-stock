@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+  db_postgres:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ostock_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  configserver:
+    image: ostock/configserver:0.0.1-SNAPSHOT
+    ports:
+      - "8071:8071"
