@@ -1,17 +1,16 @@
 package com.optimagrowth.license.controller;
 
+import com.optimagrowth.license.model.License;
+import com.optimagrowth.license.service.LicenseService;
+import com.optimagrowth.license.utils.UserContextHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.optimagrowth.license.model.License;
-import com.optimagrowth.license.service.LicenseService;
-
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 
 @RestController
 @RequestMapping("v1/organizations/{organizationId}/licenses")
@@ -21,16 +20,17 @@ public class LicenseController {
 	@Autowired
 	private LicenseService licenseService;
 
-	@GetMapping
-	public List<License> getAll() {
-		return licenseService.getAll();
+	@GetMapping("{licenseId}")
+	public License getLicense(@PathVariable String organizationId, @PathVariable String licenseId) {
+		log.info("getLicense [organizationId={}, id={}]", organizationId, licenseId);
+		return licenseService.getLicense(licenseId, organizationId, "discovery");
 	}
 
-	@GetMapping("{licenseId}")
-	public ResponseEntity<License> getLicense(@PathVariable String organizationId, @PathVariable String licenseId) {
-		log.info("getLicense [organizationId={}, id={}]", organizationId, licenseId);
-		License license = licenseService.getLicense(licenseId);
-		return ResponseEntity.ok(license);
+	@GetMapping("{licenseId}/{clientType}")
+	public License getLicenseWithClient(@PathVariable String organizationId,
+										@PathVariable String licenseId,
+										@PathVariable String clientType) {
+		return licenseService.getLicense(licenseId, organizationId, clientType);
 	}
 	
 	@PostMapping
@@ -51,18 +51,11 @@ public class LicenseController {
 		log.info("deleteLicense {}", licenseId);
 		return ResponseEntity.ok(licenseService.deleteLicense(licenseId));
 	}
-	
-	@Autowired
-	private DatasourceConfig config;
-	
-	@GetMapping("config")
-	public ObjectNode getDatabaseConfig() {
-		ObjectMapper mapper = new ObjectMapper();
-		ObjectNode json = mapper.createObjectNode();
-		json.put("spring.datasource.url", config.getUrl());
-		json.put("spring.datasource.username", config.getUsername());
-		json.put("spring.datasource.password", config.getPassword());
-		return json;
+
+	@GetMapping
+	public List<License> getLicenses(@PathVariable String organizationId) throws TimeoutException {
+		log.debug("LicenseServiceController Correlation id: {}", UserContextHolder.getContext().getCorrelationId());
+		return licenseService.getLicensesByOrganization(organizationId);
 	}
 
 }

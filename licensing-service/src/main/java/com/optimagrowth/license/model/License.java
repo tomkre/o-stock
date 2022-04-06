@@ -1,22 +1,19 @@
 package com.optimagrowth.license.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter @ToString
 @Entity
 @Table(name = "license")
+@Getter @Setter @ToString
 public class License {
 	
 	@Id
 	@Column(name = "id", nullable = false)
-	private String id;
+	private String licenseId;
 	
 	private String description;
 	
@@ -31,6 +28,18 @@ public class License {
 	
 	@Column(name = "comment")
 	private String comment;
+
+	@Transient
+	private String organizationName;
+
+	@Transient
+	private String contactName;
+
+	@Transient
+	private String contactPhone;
+
+	@Transient
+	private String contactEmail;
 	
 	public License withComment(String comment) {
 		this.comment = comment;

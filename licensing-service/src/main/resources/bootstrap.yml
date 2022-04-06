@@ -6,3 +6,48 @@ spring:
   cloud:
     config:
       uri: http://localhost:8071
+resilience4j:
+  circuitbreaker:
+    instances:
+      licenseService:
+        registerHealthIndicator: true
+        ringBufferSizeInClosedState: 3
+        ringBufferSizeInHalfOpenState: 2
+        waitDurationInOpenState: 120s
+        failureRateThreshold: 69
+        recordExceptions:
+          - java.lang.IllegalStateException
+#          - java.util.concurrent.TimeoutException
+      organizationService:
+        ringBufferSizeInClosedState: 3
+  bulkhead:
+    instances:
+      licenseService:
+        maxWaitDuration: 6s
+        maxConcurrentCalls: 2
+#  thread-pool-bulkhead:
+#    instances:
+#      licenseService:
+#        maxThreadPoolSize: 2
+#        coreThreadPoolSize: 1
+#        queueCapacity: 4
+#        keepAliveDuration: 10s
+  retry:
+    instances:
+      licenseService:
+        maxAttempts: 3
+        waitDuration: 3s
+        retry-exceptions:
+          - java.util.concurrent.TimeoutException
+  ratelimiter:
+    instances:
+      licenseService:
+        timeoutDuration: 2000ms
+        limitRefreshPeriod: 1000ms
+        limitForPeriod: 6
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+
+logging.level.com.optimagrowth.license: DEBUG
