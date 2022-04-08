@@ -8,12 +8,19 @@ eureka:
     fetchRegistry: true
     serviceUrl:
       defaultZone: http://eurekaserver:8070/eureka/
-spring:
-  cloud:
-    gateway:
-      discovery.locator:
-        enabled: true
-        lowerCaseServiceId: true
+#spring:
+#  cloud:
+#    gateway:
+#      discovery.locator:
+#        enabled: true
+#        lowerCaseServiceId: true
+#      routes:
+#        - id: organization-service
+#          uri: lb://organization-service
+#          predicates:
+#            - Path=/organization/**
+#          filters:
+#            - RewritePath=/organization/(?<path>.*), /$\{path}
 management:
   endpoints:
     web:

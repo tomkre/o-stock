@@ -4,7 +4,7 @@ spring:
   application:
     name: config-server
   profiles:
-    active: native
+    active: native,git
   cloud:
     config:
       server:
@@ -13,7 +13,7 @@ spring:
         git:
           uri: https://github.com/tomkre/smia-configserver.git
           username: tomkre
-          password: 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
+          password: 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
           searchPaths: config
         vault:
           port: 8200
