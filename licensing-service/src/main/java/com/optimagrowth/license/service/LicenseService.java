@@ -46,8 +46,6 @@ public class LicenseService {
 
 	private final OrganizationFeignClient organizationFeignClient;
 
-	private final ThreadPoolBulkheadRegistry bulkheadRegistry;
-
 	@CircuitBreaker(name = "organizationService")
 	public License getLicense(String licenseId, String organizationId, String clientType) {
 		License license = licenseRepository.findById(licenseId).get();

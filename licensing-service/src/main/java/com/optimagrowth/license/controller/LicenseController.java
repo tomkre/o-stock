@@ -30,6 +30,8 @@ public class LicenseController {
 	public License getLicenseWithClient(@PathVariable String organizationId,
 										@PathVariable String licenseId,
 										@PathVariable String clientType) {
+		log.info("getLicenseWithClient [correlationId={}, organizationId={}, id={}]",
+				UserContextHolder.getContext().getCorrelationId(), organizationId, licenseId);
 		return licenseService.getLicense(licenseId, organizationId, clientType);
 	}
 	

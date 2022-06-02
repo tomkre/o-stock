@@ -6,3 +6,5 @@ spring:
   cloud:
     config:
       uri: http://localhost:8071
+
+logging.level.com.optimagrowth.organization: DEBUG
