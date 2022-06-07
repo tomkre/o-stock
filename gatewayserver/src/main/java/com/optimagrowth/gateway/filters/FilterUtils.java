@@ -9,6 +9,8 @@ public class FilterUtils {
 
     public static final String CORRELATION_ID = "tmx-correlation-id";
 
+    public static final String TRACE_ID = "tmx-trace-id";
+
     public static final String AUTH_TOKEN = "Authorization";
 
     public static final String USER_ID = "tmx-user-id";
