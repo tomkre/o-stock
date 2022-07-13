@@ -22,6 +22,9 @@ spring:
           filters:
             - RewritePath=/organization/(?<path>.*), /$\{path}
             - RemoveRequestHeader=Cookie,Set-Cookie
+  sleuth:
+    sampler:
+      percentage: 1
   zipkin:
     baseUrl: http://zipkin:9411
 management:

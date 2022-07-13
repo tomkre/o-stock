@@ -57,12 +57,16 @@ services:
           - "gateway"
   keycloak:
     image: jboss/keycloak
-    restart: always
+#    restart: always
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
+      JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.upload_scripts=enabled
+      KEYCLOAK_IMPORT: /tmp/spmia-realm.json
     ports:
       - "8080:8080"
+    volumes:
+      - ./data/keycloak:/tmp
     networks:
       backend:
         aliases:
@@ -146,13 +150,27 @@ services:
       backend:
         aliases:
           - "logstash"
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    depends_on:
+      - "elasticsearch"
+    environment:
+      STORAGE_TYPE: elasticsearch
+      ES_HOSTS: "elasticsearch:9300"
+    networks:
+      backend:
+        aliases:
+          - "zipkin"
   licensing-service:
     image: ostock/licensing-service:0.0.1-SNAPSHOT
     ports:
       - "8180:8080"
     environment:
       SPRING_APPLICATION_NAME: licensing-service
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: dev,aws-dev
       SPRING_CLOUD_CONFIG_URI: http://configserver:8071
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/ostock_dev
       SPRING_DATASOURCE_USER: postgres
@@ -169,7 +187,7 @@ services:
       - "8081:8081"
     environment:
       SPRING_APPLICATION_NAME: organization-service
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: dev,aws-dev
       SPRING_CLOUD_CONFIG_URI: http://configserver:8071
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/ostock_dev
       SPRING_DATASOURCE_USER: postgres

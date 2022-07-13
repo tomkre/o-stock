@@ -1,5 +1,7 @@
 package com.optimagrowth.organization.service;
 
+import brave.ScopedSpan;
+import brave.Tracer;
 import com.optimagrowth.organization.events.source.ActionEnum;
 import com.optimagrowth.organization.events.source.SimpleSourceBean;
 import com.optimagrowth.organization.model.Organization;
@@ -22,13 +24,22 @@ public class OrganizationService {
 
     private final SimpleSourceBean simpleSourceBean;
 
+    private final Tracer tracer;
+
     public List<Organization> getAll() {
         return StreamSupport.stream(repository.findAll().spliterator(), false).collect(Collectors.toList());
     }
 
     public Optional<Organization> findById(String id) {
-        simpleSourceBean.publishOrganizationChange(ActionEnum.GET, id);
-        return repository.findById(id);
+        ScopedSpan newSpan = tracer.startScopedSpan("getOrgDbCall");
+        try {
+            simpleSourceBean.publishOrganizationChange(ActionEnum.GET, id);
+            return repository.findById(id);
+        } finally {
+            newSpan.tag("peer.service", "postgres");
+            newSpan.annotate("Client received");
+            newSpan.finish();
+        }
     }
 
     public Organization create(Organization organization) {
