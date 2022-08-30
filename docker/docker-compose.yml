@@ -164,20 +164,45 @@ services:
       backend:
         aliases:
           - "zipkin"
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    container_name: prometheus
+    networks:
+      backend:
+        aliases:
+          - "prometheus"
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: password
+    container_name: grafana
+    networks:
+      backend:
+        aliases:
+          - "grafana"
   licensing-service:
     image: ostock/licensing-service:0.0.1-SNAPSHOT
     ports:
       - "8180:8080"
     environment:
       SPRING_APPLICATION_NAME: licensing-service
-      SPRING_PROFILES_ACTIVE: dev,aws-dev
+      SPRING_PROFILES_ACTIVE: dev #,aws-dev
       SPRING_CLOUD_CONFIG_URI: http://configserver:8071
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/ostock_dev
       SPRING_DATASOURCE_USER: postgres
       SPRING_DATASOURCE_PASSWORD: '{cipher}0927d4500872b0de2261621c34b0f16e56a3dc145733528ba895be0971949263'
       ENCRYPT_KEY: "IMSYMMETRIC"
     networks:
-      - backend
+      backend:
+        aliases:
+          - "licensingservice"
     depends_on:
       - configserver
       - database
@@ -187,14 +212,16 @@ services:
       - "8081:8081"
     environment:
       SPRING_APPLICATION_NAME: organization-service
-      SPRING_PROFILES_ACTIVE: dev,aws-dev
+      SPRING_PROFILES_ACTIVE: dev #,aws-dev
       SPRING_CLOUD_CONFIG_URI: http://configserver:8071
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/ostock_dev
       SPRING_DATASOURCE_USER: postgres
       SPRING_DATASOURCE_PASSWORD: '{cipher}0927d4500872b0de2261621c34b0f16e56a3dc145733528ba895be0971949263'
       ENCRYPT_KEY: "IMSYMMETRIC"
     networks:
-      - backend
+      backend:
+        aliases:
+          - "organizationservice"
     depends_on:
       - configserver
       - database

@@ -1,0 +1,84 @@
+version: "3.5"
+services:
+  keycloak:
+    image: jboss/keycloak
+    container_name: keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      JAVA_OPTS_APPEND: -Dkeycloak.profile.feature.upload_scripts=enabled
+      KEYCLOAK_IMPORT: /tmp/spmia-realm.json
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data/keycloak:/tmp
+    networks:
+      backend:
+        aliases:
+          - "keycloak"
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    ports:
+      - "9300:9300"
+      - "9200:9200"
+    networks:
+      backend:
+        aliases:
+          - "elasticsearch"
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.7.0
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9300"
+    ports:
+      - "5601:5601"
+    networks:
+      backend:
+        aliases:
+          - "kibana"
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.7.0
+    container_name: logstash
+    command:
+      logstash -f /etc/logstash/conf.d/logstash.conf
+    volumes:
+      - ./config:/etc/logstash/conf.d
+    ports:
+      - "5000:5000"
+    networks:
+      backend:
+        aliases:
+          - "logstash"
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    depends_on:
+      - "elasticsearch"
+    environment:
+      STORAGE_TYPE: elasticsearch
+      ES_HOSTS: "elasticsearch:9300"
+    networks:
+      backend:
+        aliases:
+          - "zipkin"
+networks:
+  backend:
+    driver: bridge
+volumes:
+  esdata1:
+    driver: local

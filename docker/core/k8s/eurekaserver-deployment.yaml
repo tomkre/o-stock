@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f ../docker-compose-k8s.yml
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: eurekaserver
+  name: eurekaserver
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: eurekaserver
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f ../docker-compose-k8s.yml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: eurekaserver
+    spec:
+      containers:
+        - env:
+            - name: SPRING_CLOUD_CONFIG_URI
+              value: http://configserver:8071
+          image: 665971472586.dkr.ecr.us-east-1.amazonaws.com/ostock/eurekaserver:chapter12
+          name: eurekaserver
+          ports:
+            - containerPort: 8070
+          resources: {}
+      restartPolicy: Always
+status: {}

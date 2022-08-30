@@ -1,0 +1,8 @@
+export GATEWAY_URL_LOCAL=localhost:8072
+export GATEWAY_URL_AWS=3.235.229.172:31200
+
+curl \
+  -H "Authorization: Bearer $(./token)" \
+  -s \
+  -S \
+  http://${GATEWAY_URL_LOCAL}/licensing-service/v1/organizations/d898a142-de44-466c-8c88-9ceb2c2429d3/licenses/f2a9c9d4-d2c0-44fa-97fe-724d77173c62/rest | jq '.'

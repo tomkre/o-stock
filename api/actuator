@@ -1,0 +1,4 @@
+curl \
+  -H "Authorization: Bearer $(./token)" \
+  -sSv \
+  http://localhost:8180/actuator | jq '.'

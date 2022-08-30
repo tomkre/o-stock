@@ -1,0 +1,11 @@
+export KEYCLOAK_HOST_LOCAL=keycloak
+export KEYCLOAK_HOST_AWS=ec2-44-203-245-145.compute-1.amazonaws.com
+
+curl \
+  -X POST \
+  -u ostock:8pVmI7vnxs7QkeyXNPkzPkUDvKItjlcb \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d 'grant_type=password&username=illary.huaylupo&password=password1' \
+  -s \
+  -S \
+  "http://${KEYCLOAK_HOST_LOCAL}:8080/auth/realms/spmia-realm/protocol/openid-connect/token" | jq '.access_token' | tr -d '"'
