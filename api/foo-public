@@ -1,0 +1,4 @@
+curl \
+  -X GET \
+  -sS \
+  "http://localhost:8080/foo" | jq '.'

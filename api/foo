@@ -1,0 +1,5 @@
+curl \
+  -X GET \
+  -H "Authorization: Bearer $(./auth-service-token-value)" \
+  -sS \
+  "http://localhost:8080/foo" | jq '.'

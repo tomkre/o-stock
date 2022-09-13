@@ -1,0 +1,9 @@
+curl \
+  -X POST \
+  -u ostock:thisissecret \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  -d grant_type=password \
+  -d username=illary.huaylupo \
+  -d password=password1 \
+  -sS \
+  "http://localhost:8082/oauth/token" | jq '.'
